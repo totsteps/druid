@@ -70,12 +70,12 @@ impl BasicTextInput {
 impl TextInput for BasicTextInput {
     fn handle_event(&self, event: &KeyEvent) -> Option<EditAction> {
         let action = match event {
-            // Select left word (Shift+Ctrl+ArrowLeft || Shift+Cmd+ArrowLeft)
-            k_e if (HotKey::new(SysMods::CmdShift, KbKey::ArrowLeft)).matches(k_e) => {
+            // Select left word (Shift+Ctrl+ArrowLeft || Shift+Alt+ArrowLeft)
+            k_e if (HotKey::new(SysMods::AltCtrlShift, KbKey::ArrowLeft)).matches(k_e) => {
                 EditAction::ModifySelection(Movement::LeftWord)
             }
-            // Select right word (Shift+Ctrl+ArrowRight || Shift+Cmd+ArrowRight)
-            k_e if (HotKey::new(SysMods::CmdShift, KbKey::ArrowRight)).matches(k_e) => {
+            // Select right word (Shift+Ctrl+ArrowRight || Shift+Alt+ArrowRight)
+            k_e if (HotKey::new(SysMods::AltCtrlShift, KbKey::ArrowRight)).matches(k_e) => {
                 EditAction::ModifySelection(Movement::RightWord)
             }
             // Select to home (Shift+Home)
@@ -94,14 +94,32 @@ impl TextInput for BasicTextInput {
             k_e if (HotKey::new(SysMods::Shift, KbKey::ArrowRight)).matches(k_e) => {
                 EditAction::ModifySelection(Movement::Right)
             }
+            // Select until PrecedingLineBreak (Cmd+Shift+ArrowLeft)
+            #[cfg(target_os = "macos")]
+            k_e if (HotKey::new(SysMods::CmdShift, KbKey::ArrowLeft)).matches(k_e) => {
+                EditAction::ModifySelection(Movement::PrecedingLineBreak)
+            }
+            // Select until PrecedingLineBreak (Cmd+Shift+ArrowRight)
+            #[cfg(target_os = "macos")]
+            k_e if (HotKey::new(SysMods::CmdShift, KbKey::ArrowRight)).matches(k_e) => {
+                EditAction::ModifySelection(Movement::NextLineBreak)
+            }
+            // Select until PrecedingLineBreak (Shift+ArrowUp)
+            k_e if (HotKey::new(SysMods::Shift, KbKey::ArrowUp)).matches(k_e) => {
+                EditAction::ModifySelection(Movement::PrecedingLineBreak)
+            }
+            // Select until NextLineBreak (Shift+ArrowDown)
+            k_e if (HotKey::new(SysMods::Shift, KbKey::ArrowDown)).matches(k_e) => {
+                EditAction::ModifySelection(Movement::NextLineBreak)
+            }
             // Select all (Ctrl+A || Cmd+A)
             k_e if (HotKey::new(SysMods::Cmd, "a")).matches(k_e) => EditAction::SelectAll,
-            // Left word (Ctrl+ArrowLeft || Cmd+ArrowLeft)
-            k_e if (HotKey::new(SysMods::Cmd, KbKey::ArrowLeft)).matches(k_e) => {
+            // Left word (Ctrl+ArrowLeft || Alt+ArrowLeft)
+            k_e if (HotKey::new(SysMods::AltCtrl, KbKey::ArrowLeft)).matches(k_e) => {
                 EditAction::Move(Movement::LeftWord)
             }
-            // Right word (Ctrl+ArrowRight || Cmd+ArrowRight)
-            k_e if (HotKey::new(SysMods::Cmd, KbKey::ArrowRight)).matches(k_e) => {
+            // Right word (Ctrl+ArrowRight || Alt+ArrowRight)
+            k_e if (HotKey::new(SysMods::AltCtrl, KbKey::ArrowRight)).matches(k_e) => {
                 EditAction::Move(Movement::RightWord)
             }
             // Move left (ArrowLeft)
@@ -111,6 +129,24 @@ impl TextInput for BasicTextInput {
             // Move right (ArrowRight)
             k_e if (HotKey::new(None, KbKey::ArrowRight)).matches(k_e) => {
                 EditAction::Move(Movement::Right)
+            }
+            // Move to PrecedingLineBreak (Cmd+ArrowLeft)
+            #[cfg(target_os = "macos")]
+            k_e if (HotKey::new(SysMods::Cmd, KbKey::ArrowLeft)).matches(k_e) => {
+                EditAction::Move(Movement::PrecedingLineBreak)
+            }
+            // Move to NextLineBreak (ArrowDown)
+            #[cfg(target_os = "macos")]
+            k_e if (HotKey::new(SysMods::Cmd, KbKey::ArrowRight)).matches(k_e) => {
+                EditAction::Move(Movement::NextLineBreak)
+            }
+            // Move to PrecedingLineBreak (ArrowUp)
+            k_e if (HotKey::new(None, KbKey::ArrowUp)).matches(k_e) => {
+                EditAction::Move(Movement::PrecedingLineBreak)
+            }
+            // Move to NextLineBreak (ArrowDown)
+            k_e if (HotKey::new(None, KbKey::ArrowDown)).matches(k_e) => {
+                EditAction::Move(Movement::NextLineBreak)
             }
             // Delete left word
             k_e if (HotKey::new(SysMods::Cmd, KbKey::Backspace)).matches(k_e) => {

@@ -130,6 +130,10 @@ pub enum SysMods {
     Cmd,
     /// Command + Alt on macOS, Ctrl + Alt on windows/linux
     AltCmd,
+    /// Alt on macOS, Ctrl on windows/linux
+    AltCtrl,
+    /// Alt + Shift on macOS, Ctrl + Shift on windows/linux
+    AltCtrlShift,
     /// Command + Shift on macOS, Ctrl + Shift on windows/linux
     CmdShift,
     /// Command + Alt + Shift on macOS, Ctrl + Alt + Shift on windows/linux
@@ -231,6 +235,8 @@ impl From<SysMods> for RawMods {
             SysMods::Shift => RawMods::Shift,
             SysMods::Cmd => RawMods::Meta,
             SysMods::AltCmd => RawMods::AltMeta,
+            SysMods::AltCtrl => RawMods::Alt,
+            SysMods::AltCtrlShift => RawMods::AltShift,
             SysMods::CmdShift => RawMods::MetaShift,
             SysMods::AltCmdShift => RawMods::AltMetaShift,
         }
@@ -239,6 +245,8 @@ impl From<SysMods> for RawMods {
             SysMods::None => RawMods::None,
             SysMods::Shift => RawMods::Shift,
             SysMods::Cmd => RawMods::Ctrl,
+            SysMods::AltCtrl => RawMods::Ctrl,
+            SysMods::AltCtrlShift => RawMods::CtrlShift,
             SysMods::AltCmd => RawMods::AltCtrl,
             SysMods::CmdShift => RawMods::CtrlShift,
             SysMods::AltCmdShift => RawMods::AltCtrlShift,
